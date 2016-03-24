@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file:///media/hungr/Ext/android/project/WeatherApp/WeatherApp.iml" filepath="/media/hungr/Ext/android/project/WeatherApp/WeatherApp.iml" />
+      <module fileurl="file:///media/hungr/Ext/android/project/WeatherApp/app/app.iml" filepath="/media/hungr/Ext/android/project/WeatherApp/app/app.iml" />
+    </modules>
+  </component>
+</project>
