@@ -1,99 +1,58 @@
 package com.ebay.roy.weatherapp.manager;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.util.Base64;
-import android.util.Log;
 
-import java.io.File;
-import java.util.concurrent.TimeUnit;
+
+import com.ebay.roy.weatherapp.R;
+import com.ebay.roy.weatherapp.service.WeatherApiService;
+
+import java.io.IOException;
+
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+
+import okhttp3.Request;
+
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by hungr on 24/03/16.
  */
 public class ApiManager {
 
-    public ApiService init(final Context context, String fapiUrl) {
-        //register deserializer
-        Gson gson = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapter(Recipe.class, new RecipeDeserializer())
-                .registerTypeAdapter(RecipeListResponse.class, new RecipeListResponseDeserializer())
-                .registerTypeAdapter(CollectionListResponse.class, new CollectionListResponseDeserializer())
-                .create();
-
-        //setup cache
-        File httpCacheDirectory = new File(context.getCacheDir(), "responses");
-        Cache cache = null;
-        try {
-            cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
-        } catch (Exception e) {
-            Log.e(LOG_PREFIX, "OKHTTP, Could not create http cache", e);
-        }
-
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.networkInterceptors().add(new StethoInterceptor());    //link http with debuggers
-
-        okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
-        if (cache != null) {
-            okHttpClient.setCache(cache);
-        }
-
-
-        String credentials = context.getResources().getString(R.string.fapi_api_user_name) + ":" + context.getResources().getString(R.string.fapi_api_user_password);
-        final String encodedCredentials = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
-        //get version
-        String versionName = "1.0";
-        try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            versionName = pInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        final String finalVersionName = versionName;
-
-        //setup restAdapter ,
-        RestAdapter.Builder restBuilder = new RestAdapter.Builder()
-                .setEndpoint(fapiUrl)
-                .setConverter(new GsonConverter(gson))
-                .setClient(new OkClient(okHttpClient))
-                .setRequestInterceptor(
-                        new RequestInterceptor() {
+    /**
+     * this function initialised the weather service and add api key as a prefix query by intercepting the query using okhttp
+     * @param apiUrl
+     * @param apiKey
+     */
+    public WeatherApiService getWeatherService(final String apiUrl, final String apiKey) {
+        //add api key as a query suffix by intercepting value
+        OkHttpClient okClient = new OkHttpClient.Builder()
+                .addInterceptor(
+                        new Interceptor() {
                             @Override
-                            public void intercept(RequestFacade request) {
-                                request.addHeader("Accept", "application/json;versions=1");
-                                //context may not be avaiable here so instead use global application context to check if online
-                                if (ConnectivityService.isOnline(context)) {
-                                    int maxAge = 60; // read from cache for 1 minute
-                                    request.addHeader("Cache-Control", "public, max-age=" + maxAge);
-                                    request.addHeader("Authorization", encodedCredentials);
-                                    request.addHeader("User-Agent", "Tasteapp/" + finalVersionName +"/Android " + "(" + Build.MODEL +")");
-
-                                } else {
-                                    int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
-                                    request.addHeader("Cache-Control",
-                                            "public, only-if-cached, max-stale=" + maxStale);
-                                }
+                            public Response intercept(Interceptor.Chain chain) throws IOException {
+                                Request request = chain.request();
+                                HttpUrl url = request.url().newBuilder().addQueryParameter("apikey", apiKey).build();
+                                request = request.newBuilder().url(url).build();
+                                return chain.proceed(request);
                             }
-                        }
-                );
+                        })
+                .build();
 
-        String isMockClient = context.getString(R.string.fapi_mock_enabled);
 
-        if (isMockClient.equals("true")) {
-            restBuilder.setClient(new MockClient(context, "test"));
-        }
 
-        RestAdapter restAdapter = restBuilder.build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(apiUrl)
+                .client(okClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-        if (BuildConfig.DEBUG) {
-            restAdapter.setLogLevel(RestAdapter.LogLevel.BASIC);
-        }
-
-        ApiService service = restAdapter.create(ApiService.class);
-        return service;
+        return retrofit.create(WeatherApiService.class);
     }
+
+
 }
