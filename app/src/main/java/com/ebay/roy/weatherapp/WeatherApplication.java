@@ -3,8 +3,8 @@ package com.ebay.roy.weatherapp;
 import android.app.Application;
 
 import com.ebay.roy.weatherapp.di.component.ApplicationComponent;
-import com.ebay.roy.weatherapp.di.module.ApplicationModule;
 import com.ebay.roy.weatherapp.di.component.DaggerApplicationComponent;
+import com.ebay.roy.weatherapp.di.module.ApplicationModule;
 
 /**
  * Created by Roy on 3/25/2016.

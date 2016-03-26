@@ -6,7 +6,10 @@ import android.app.Application;
 
 import com.ebay.roy.weatherapp.R;
 import com.ebay.roy.weatherapp.manager.ApiManager;
+import com.ebay.roy.weatherapp.manager.ImageLoaderManager;
+import com.ebay.roy.weatherapp.manager.SearchManager;
 import com.ebay.roy.weatherapp.service.WeatherApiService;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import javax.inject.Singleton;
 
@@ -36,6 +39,18 @@ public class ApplicationModule {
         String weatherApiKey = application.getString(R.string.weather_api_key);
         return apiManager.getWeatherService(weatherApiUrl, weatherApiKey);
     }
+
+
+    @Provides
+    @Singleton
+    ImageLoader provideImageLoaderService() {
+        ImageLoaderManager uilImageLoader = new ImageLoaderManager();
+        uilImageLoader.init(application.getApplicationContext());
+        return uilImageLoader.getImageLoader();
+    }
+
+
+
 
 
 }

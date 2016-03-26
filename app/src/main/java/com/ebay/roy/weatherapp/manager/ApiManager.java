@@ -16,6 +16,7 @@ import okhttp3.Request;
 
 import okhttp3.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -49,6 +50,7 @@ public class ApiManager {
                 .baseUrl(apiUrl)
                 .client(okClient)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
 
         return retrofit.create(WeatherApiService.class);

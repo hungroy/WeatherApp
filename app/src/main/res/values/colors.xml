@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/blueDark</color>
+    <color name="colorPrimaryDark">@color/blueDarker</color>
+    <color name="colorAccent">@color/pink</color>
+    <color name="colorPrimaryText">@color/white</color>
+
+    <color name="white">#ffffff</color>
+    <color name="blueDarker">#22589e</color>
+    <color name="blueDark">#ff05589e</color>
+    <color name="greenPressed">#aec64e</color>
+    <color name="greenLighter">#c4ec26</color>
+    <color name="greenPale">#f4f9db</color>
+    <color name="greenLight">#e4f2ad</color>
+    <color name="greenMidLight">#cbdd82</color>
+    <color name="greenDark">#8a9a6a</color>
+    <color name="greenDarker">#667822</color>
+    <color name="green">#9dbd1f</color>
+    <color name="red">#CB1B2F</color>
+    <color name="pink">#E91E63</color>
+    <color name="purple">#9C27B0</color>
+    <color name="blue">#2196F3</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="yellowLight">#f3f9da</color>
+    <color name="orange">#FF9800</color>
+    <color name="grey">#ebebeb</color>
+    <color name="greyLight">#f6f6f6</color>
+    <color name="greyDark">#4d4d4d</color>
+    <color name="brown">#795548</color>
 </resources>

@@ -6,10 +6,17 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Observable;
 
 public interface WeatherApiService {
 
     @GET("weather")
-    Call<Weather> getWeather(@Query("q") String query);
+    Observable<Weather> getWeatherByCity(@Query("q") String query);
+
+    @GET("weather")
+    Observable<Weather> getWeatherByZip(@Query("zip") String query);
+
+    @GET("weather")
+    Observable<Weather> getWeatherByLatLon(@Query("lat") double lat, @Query("lon") double lon );
 
 }

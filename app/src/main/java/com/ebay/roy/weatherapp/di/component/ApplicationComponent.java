@@ -4,7 +4,10 @@ import android.app.Application;
 
 import com.ebay.roy.weatherapp.activity.BaseActivity;
 import com.ebay.roy.weatherapp.di.module.ApplicationModule;
+import com.ebay.roy.weatherapp.manager.ImageLoaderManager;
+import com.ebay.roy.weatherapp.manager.SearchManager;
 import com.ebay.roy.weatherapp.service.WeatherApiService;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import javax.inject.Singleton;
 
@@ -20,4 +23,5 @@ public interface ApplicationComponent {
     //Exposed to sub-graphs.
     Application application();
     WeatherApiService provideWeatherService();
+    ImageLoader provideImageLoaderService();
 }

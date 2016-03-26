@@ -8,8 +8,8 @@ import com.google.gson.annotations.SerializedName;
 public class Main {
 
     private Double temp;
-    private Integer pressure;
-    private Integer humidity;
+    private Double pressure;
+    private Double humidity;
     private Double tempMin;
     private Double tempMax;
 
@@ -36,7 +36,7 @@ public class Main {
      * @return
      *     The pressure
      */
-    public Integer getPressure() {
+    public Double getPressure() {
         return pressure;
     }
 
@@ -45,7 +45,7 @@ public class Main {
      * @param pressure
      *     The pressure
      */
-    public void setPressure(Integer pressure) {
+    public void setPressure(Double pressure) {
         this.pressure = pressure;
     }
 
@@ -54,7 +54,7 @@ public class Main {
      * @return
      *     The humidity
      */
-    public Integer getHumidity() {
+    public Double getHumidity() {
         return humidity;
     }
 
@@ -63,7 +63,7 @@ public class Main {
      * @param humidity
      *     The humidity
      */
-    public void setHumidity(Integer humidity) {
+    public void setHumidity(Double humidity) {
         this.humidity = humidity;
     }
 
