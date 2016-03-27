@@ -50,4 +50,18 @@ public class SearchManager {
 
     }
 
+    public void moveSearchTextToTop(String searchText) {
+        int index = searchHistory.indexOf(searchText);
+        //element either is first item already, or not found
+        if (index <= 0) {
+            return;
+        }
+
+        searchHistory.remove(index);
+        searchHistory.add(0, searchText);
+
+        editor.putString(SEARCH_HISTORY_LIST_KEY, gson.toJson(searchHistory));
+        editor.commit();
+    }
+
 }

@@ -16,10 +16,19 @@ public class Main {
     /**
      * 
      * @return
-     *     The temp
+     *     The temp in kelvin
      */
     public Double getTemp() {
         return temp;
+    }
+
+    /**
+     *
+     * @return
+     *  The temp in celsius
+     */
+    public String getTempC() {
+        return String.format("%.1f", temp - 274.15);
     }
 
     /**

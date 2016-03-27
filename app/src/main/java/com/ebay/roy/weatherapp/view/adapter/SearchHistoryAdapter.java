@@ -18,6 +18,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter {
 
     private List<String> textList;
     private Context context;
+    OnViewItemClickListener onViewItemClickListener;
 
     public SearchHistoryAdapter(Context context, List<String> textList) {
         this.context = context;
@@ -28,6 +29,10 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_search_history, null);
         SearchHistoryViewHolder searchHistoryViewHolder = new SearchHistoryViewHolder(itemView);
+        //set on view click listener if assigned
+        if (onViewItemClickListener != null) {
+            searchHistoryViewHolder.setOnViewItemClickListener(onViewItemClickListener);
+        }
         return searchHistoryViewHolder;
     }
 
@@ -40,4 +45,13 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return textList.size();
     }
+
+    public void setOnViewItemClickListener(final OnViewItemClickListener onViewItemClickListener) {
+        this.onViewItemClickListener = onViewItemClickListener;
+    }
+
+    public interface OnViewItemClickListener {
+        public void onItemClick(View view, int position);
+    }
 }
+

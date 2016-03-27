@@ -2,6 +2,7 @@ package com.ebay.roy.weatherapp.activity;
 
 import android.Manifest;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Criteria;
@@ -58,13 +59,14 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class MainActivity extends BaseActivity implements OnMapReadyCallback {
+public class MainActivity extends BaseActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     Subscription subscription;
     SearchView searchView;
     MapFragment mapFragment;
     GoogleMap googleMap;
     @Bind(R.id.gpsBtn) FloatingActionButton gpsBtn;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +142,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is now ready", Toast.LENGTH_SHORT).show();
         this.googleMap = googleMap;
+        googleMap.getUiSettings().setMapToolbarEnabled(false); //hide control buttons from google map
         addGPSBtnActionOnMap();
 
     }
@@ -181,6 +184,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
             Toast.makeText(this, "Map not ready yet, please try again later", Toast.LENGTH_SHORT).show();
             return;
         }
+        showLoadingDialog();
         Observable<Weather> call = weatherApiService.getWeatherByCity(searchText);
         subscription = call
                 .subscribeOn(Schedulers.io())
@@ -188,17 +192,20 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                 .subscribe(new Subscriber<Weather>() {
                     @Override
                     public void onCompleted() {
+                        dismissLoadingDialog();
                         Toast.makeText(getApplicationContext(), "on complete", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        dismissLoadingDialog();
                         Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onNext(Weather weather) {
                         addMarker(weather);
+
                     }
                 });
     }
@@ -208,6 +215,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
             Toast.makeText(this, "Map not ready yet, please try again later", Toast.LENGTH_SHORT).show();
             return;
         }
+        showLoadingDialog();
         Observable<Weather> call = weatherApiService.getWeatherByLatLon(latLng.latitude, latLng.longitude);
         subscription = call
                 .subscribeOn(Schedulers.io())
@@ -215,11 +223,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                 .subscribe(new Subscriber<Weather>() {
                     @Override
                     public void onCompleted() {
+                        dismissLoadingDialog();
                         Toast.makeText(getApplicationContext(), "on complete", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        dismissLoadingDialog();
                         Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
                     }
 
@@ -239,17 +249,20 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
         final LatLng latLng = new LatLng(weather.getCoord().getLat(), weather.getCoord().getLon());
         Weather_ currentWeather = weather.getWeather().get(0);
 
+        //return tempurature in celsuis
         final MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .title(weather.getName())
-                .snippet(currentWeather.getMain() + ", " + currentWeather.getDescription() + ", " + "temp :" + weather.getMain().getTemp())
+                .snippet(currentWeather.getMain() + ", " + currentWeather.getDescription() + ", " + "temp :" + weather.getMain().getTempC() + " \u2103")
                 ;
 
         final Marker marker = googleMap.addMarker(markerOptions);
         // Zoom and move camera to queried location
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        googleMap.setOnInfoWindowClickListener(this);
         marker.showInfoWindow();
+
 
         //over network need to load image async
         String imageUrl = "http://openweathermap.org/img/w/" + currentWeather.getIcon() +".png";
@@ -274,7 +287,31 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
 
             }
         });
+
+        //i am probably looking at the map page now, close all search if search bar is still open
+        searchView.setQuery("", false);
+        searchView.setIconified(true);
     }
 
+    public void showLoadingDialog() {
 
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Loading ....");
+            progressDialog.setMessage("Searching weather location");
+        }
+        progressDialog.show();
+    }
+
+    public void dismissLoadingDialog() {
+
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this, "i clicked info text", Toast.LENGTH_SHORT).show();
+    }
 }
