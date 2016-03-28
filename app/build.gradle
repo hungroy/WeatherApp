@@ -76,6 +76,10 @@ dependencies {
     compile 'frankiesardo:icepick:3.2.0'
     provided 'frankiesardo:icepick-processor:3.2.0'
 
+    //parceler library
+    compile 'org.parceler:parceler-api:1.0.4'
+    apt 'org.parceler:parceler:1.0.4'
+
     compile 'com.google.android.gms:play-services-maps:8.4.0'
 
 

@@ -3,6 +3,7 @@ package com.ebay.roy.weatherapp.activity;
 import android.Manifest;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Criteria;
@@ -48,10 +49,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import icepick.State;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -65,8 +63,18 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
     SearchView searchView;
     MapFragment mapFragment;
     GoogleMap googleMap;
+
     @Bind(R.id.gpsBtn) FloatingActionButton gpsBtn;
     ProgressDialog progressDialog;
+    public static final String LAST_LOCATION_LAT = "LastLocationLat";
+    public static final String LAST_LOCATION_LNG = "LastLocationLng";
+    public static final Float MIN_LOCATION_LAT_LNG_VALUE = -999f;
+    public static final Integer DEFAULT_MAP_ZOOM_LEVEL = 10;
+
+    Float lastLat = MIN_LOCATION_LAT_LNG_VALUE;  //set a negative value that exceeds the max negative lat and lng to check for null
+    Float lastLng = MIN_LOCATION_LAT_LNG_VALUE;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +89,12 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         ButterKnife.bind(this);
         //weatherApiService = getApplicationComponent().provideWeatherService();
 
-        mapFragment = MapFragment.newInstance();
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.containerBody, mapFragment);
-        fragmentTransaction.commit();
+        if (mapFragment == null) {
+            mapFragment = MapFragment.newInstance();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.containerBody, mapFragment);
+            fragmentTransaction.commit();
+        }
 
         mapFragment.getMapAsync(this);
 
@@ -130,6 +140,37 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        //store the last location before stop, we could store whole weather object this would avoid another api call, but the user probably wants the latest weather status, so we query api just by storing lnt lat
+        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+        editor.putFloat(LAST_LOCATION_LAT , lastLat);
+        editor.putFloat(LAST_LOCATION_LNG, lastLng);
+        editor.commit();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Float lat = getPreferences(MODE_PRIVATE).getFloat(LAST_LOCATION_LAT, MIN_LOCATION_LAT_LNG_VALUE);
+        Float lng = getPreferences(MODE_PRIVATE).getFloat(LAST_LOCATION_LNG, MIN_LOCATION_LAT_LNG_VALUE);
+        if (lat > MIN_LOCATION_LAT_LNG_VALUE && lng > MIN_LOCATION_LAT_LNG_VALUE) {
+            lastLat = lat;
+            lastLng = lng;
+        }
+
+        //remove these value, so when restate won't have the previous value
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .remove(LAST_LOCATION_LAT)
+                .remove(LAST_LOCATION_LNG)
+                .commit();
+    }
+
+
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (subscription != null) {
@@ -145,11 +186,20 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         googleMap.getUiSettings().setMapToolbarEnabled(false); //hide control buttons from google map
         addGPSBtnActionOnMap();
 
+        //if have previous location restore previous location
+        if (lastLng > MIN_LOCATION_LAT_LNG_VALUE && lastLat > MIN_LOCATION_LAT_LNG_VALUE) {
+            addWeatherMarkerByLocation(new LatLng(lastLat, lastLng));
+        }
+    }
+
+    private void reSyncMap() {
+        Toast.makeText(this, "Map not ready yet, please try again later", Toast.LENGTH_SHORT).show();
+        mapFragment.getMapAsync(this);
     }
 
     private void addGPSBtnActionOnMap() {
         if (googleMap == null) {
-            Toast.makeText(this, "Map not ready yet, please try again later", Toast.LENGTH_SHORT).show();
+            reSyncMap();
             return;
         }
         gpsBtn.setOnClickListener(new View.OnClickListener() {
@@ -181,7 +231,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
 
     public void addWeatherMarkerBySearch(String searchText) {
         if (googleMap == null) {
-            Toast.makeText(this, "Map not ready yet, please try again later", Toast.LENGTH_SHORT).show();
+            reSyncMap();
             return;
         }
         showLoadingDialog();
@@ -205,14 +255,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
                     @Override
                     public void onNext(Weather weather) {
                         addMarker(weather);
-
                     }
                 });
     }
 
     private void addWeatherMarkerByLocation(LatLng latLng) {
         if (googleMap == null) {
-            Toast.makeText(this, "Map not ready yet, please try again later", Toast.LENGTH_SHORT).show();
+            reSyncMap();
             return;
         }
         showLoadingDialog();
@@ -242,9 +291,15 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
 
     private void addMarker(Weather weather) {
         if (googleMap == null) {
-            Toast.makeText(this, "Map not ready yet, please try again later", Toast.LENGTH_SHORT).show();
+            reSyncMap();
             return;
         }
+
+        //store last location so if app resumes, it can find it's previous location
+        //use float type so can store in sharedpreferences
+        lastLat = new Float(weather.getCoord().getLat());
+        lastLng = new Float(weather.getCoord().getLon());
+
         //get location from api to confirm correct result
         final LatLng latLng = new LatLng(weather.getCoord().getLat(), weather.getCoord().getLon());
         Weather_ currentWeather = weather.getWeather().get(0);
@@ -259,7 +314,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         final Marker marker = googleMap.addMarker(markerOptions);
         // Zoom and move camera to queried location
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULT_MAP_ZOOM_LEVEL));
         googleMap.setOnInfoWindowClickListener(this);
         marker.showInfoWindow();
 

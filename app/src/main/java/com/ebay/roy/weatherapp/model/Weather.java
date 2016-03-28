@@ -1,9 +1,12 @@
 
 package com.ebay.roy.weatherapp.model;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Parcel(Parcel.Serialization.BEAN)
 public class Weather {
 
 
