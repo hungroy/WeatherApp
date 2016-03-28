@@ -86,4 +86,8 @@ public class Weather_ {
         this.icon = icon;
     }
 
+    public String getIconUrl() {
+        return "http://openweathermap.org/img/w/" + icon +".png";
+    }
+
 }

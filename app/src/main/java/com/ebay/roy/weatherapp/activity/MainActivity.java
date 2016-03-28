@@ -3,6 +3,7 @@ package com.ebay.roy.weatherapp.activity;
 import android.Manifest;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -44,6 +45,11 @@ import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 
+import org.parceler.Parcel;
+import org.parceler.Parcels;
+
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -68,13 +74,16 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
     ProgressDialog progressDialog;
     public static final String LAST_LOCATION_LAT = "LastLocationLat";
     public static final String LAST_LOCATION_LNG = "LastLocationLng";
+    public static final String WEATHER_DETAIL_KEY = "WeatherDetailKey";
+    public static final String WEATHER_DETAIL_BITMAP_KEY = "WeatherDetailBitmapKey";
     public static final Float MIN_LOCATION_LAT_LNG_VALUE = -999f;
     public static final Integer DEFAULT_MAP_ZOOM_LEVEL = 10;
 
     Float lastLat = MIN_LOCATION_LAT_LNG_VALUE;  //set a negative value that exceeds the max negative lat and lng to check for null
     Float lastLng = MIN_LOCATION_LAT_LNG_VALUE;
 
-
+    HashMap<String, Weather> markerReference; //reference to all the marker currently created
+    HashMap<String, Bitmap> markerIconReference; //reference to all bitmap
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +96,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         }
 
         ButterKnife.bind(this);
-        //weatherApiService = getApplicationComponent().provideWeatherService();
-
+        markerReference = new HashMap<>();
+        markerIconReference = new HashMap<>();
         if (mapFragment == null) {
             mapFragment = MapFragment.newInstance();
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -317,11 +326,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULT_MAP_ZOOM_LEVEL));
         googleMap.setOnInfoWindowClickListener(this);
         marker.showInfoWindow();
-
+        markerReference.put(marker.getId(), weather);   //add weather and marker reference, so can be used later either to redraw whole marker or on click for detail page
 
         //over network need to load image async
-        String imageUrl = "http://openweathermap.org/img/w/" + currentWeather.getIcon() +".png";
-        imageLoader.loadImage(imageUrl, new ImageSize(300, 300), new ImageLoadingListener() {
+        imageLoader.loadImage(currentWeather.getIconUrl(), new ImageSize(300, 300), new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
 
@@ -335,6 +343,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(loadedImage));
+                markerIconReference.put(marker.getId(), loadedImage);
             }
 
             @Override
@@ -367,6 +376,18 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(this, "i clicked info text", Toast.LENGTH_SHORT).show();
+        //go to detailed weather page
+        WeatherDetailActivity weatherDetailActivity = new WeatherDetailActivity();
+        if (!markerReference.containsKey(marker.getId())) {
+            Toast.makeText(this, "marker does not exist ? try query again", Toast.LENGTH_SHORT).show();
+        }
+        Weather weather = markerReference.get(marker.getId());
+        Bitmap weatherIcon = markerIconReference.get(marker.getId());
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(WEATHER_DETAIL_KEY, Parcels.wrap(weather));
+        bundle.putParcelable(WEATHER_DETAIL_BITMAP_KEY, weatherIcon);
+        Intent intent = new Intent(this, WeatherDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

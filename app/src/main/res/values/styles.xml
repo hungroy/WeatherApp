@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">@color/green</item>
         <item name="android:textColorPrimary">@color/colorPrimaryText</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="actionMenuTextColor">@color/greyDark</item>
+        <item name="android:textColor">@color/greyDark</item>
     </style>
+
+
 
 </resources>

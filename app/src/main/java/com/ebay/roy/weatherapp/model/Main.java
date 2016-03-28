@@ -12,8 +12,8 @@ public class Main {
     private Double temp;
     private Double pressure;
     private Double humidity;
-    private Double tempMin;
-    private Double tempMax;
+    private Double temp_min;
+    private Double temp_max;
 
     /**
      * 
@@ -84,7 +84,11 @@ public class Main {
      *     The tempMin
      */
     public Double getTempMin() {
-        return tempMin;
+        return temp_min;
+    }
+
+    public String getTempMinC() {
+        return String.format("%.1f", temp_min - 274.15);
     }
 
     /**
@@ -93,7 +97,7 @@ public class Main {
      *     The temp_min
      */
     public void setTempMin(Double tempMin) {
-        this.tempMin = tempMin;
+        this.temp_min = tempMin;
     }
 
     /**
@@ -102,16 +106,19 @@ public class Main {
      *     The tempMax
      */
     public Double getTempMax() {
-        return tempMax;
+        return temp_max;
     }
 
+    public String getTempMaxC() {
+        return String.format("%.1f", temp_max - 274.15);
+    }
     /**
      * 
      * @param tempMax
      *     The temp_max
      */
     public void setTempMax(Double tempMax) {
-        this.tempMax = tempMax;
+        this.temp_max = tempMax;
     }
 
 }

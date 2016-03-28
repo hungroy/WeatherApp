@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ebay.roy.weatherapp.WeatherApplication;
 import com.ebay.roy.weatherapp.activity.BaseActivity;
 import com.ebay.roy.weatherapp.di.component.ActivityComponent;
+import com.squareup.leakcanary.RefWatcher;
 
 import icepick.Icepick;
 
@@ -50,5 +52,12 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = WeatherApplication.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 }
