@@ -10,6 +10,7 @@ import com.ebay.roy.weatherapp.manager.ImageLoaderManager;
 import com.ebay.roy.weatherapp.manager.SearchManager;
 import com.ebay.roy.weatherapp.service.WeatherApiService;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.utils.StorageUtils;
 
 import javax.inject.Singleton;
 
