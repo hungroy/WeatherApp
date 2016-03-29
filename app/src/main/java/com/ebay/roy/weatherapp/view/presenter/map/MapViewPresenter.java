@@ -186,6 +186,7 @@ public class MapViewPresenter extends BasePresenter implements OnMapReadyCallbac
         Location myLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (myLocation == null) {
             Toast.makeText(getActivity(), "Could not determine your location, your GPS may be turned off, please turn it on and try again", Toast.LENGTH_SHORT).show();
+            return;
         }
         mapViewPresenter.addWeatherMarkerByLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()));
     }
@@ -274,7 +275,6 @@ public class MapViewPresenter extends BasePresenter implements OnMapReadyCallbac
 
             }
         });
-
 
     }
 
