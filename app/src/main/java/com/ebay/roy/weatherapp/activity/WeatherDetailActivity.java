@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.ebay.roy.weatherapp.R;
 import com.ebay.roy.weatherapp.databinding.ActivityWeatherDetailBinding;
 import com.ebay.roy.weatherapp.model.Weather;
+import com.ebay.roy.weatherapp.view.presenter.map.MapViewPresenter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.parceler.Parcels;
@@ -45,9 +46,9 @@ public class WeatherDetailActivity extends BaseActivity {
         weather = new Weather();
         //get weather variable
         Bundle extra = getIntent().getExtras();
-        if (extra != null && extra.getParcelable(MainActivity.WEATHER_DETAIL_KEY) != null) {
-            weather = Parcels.unwrap(extra.getParcelable(MainActivity.WEATHER_DETAIL_KEY));
-            weatherIcon = extra.getParcelable(MainActivity.WEATHER_DETAIL_BITMAP_KEY);
+        if (extra != null && extra.getParcelable(MapViewPresenter.WEATHER_DETAIL_KEY) != null) {
+            weather = Parcels.unwrap(extra.getParcelable(MapViewPresenter.WEATHER_DETAIL_KEY));
+            weatherIcon = extra.getParcelable(MapViewPresenter.WEATHER_DETAIL_BITMAP_KEY);
         }
 
         binding.setWeather(weather);

@@ -97,6 +97,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar.setTitle(title);
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
 }
