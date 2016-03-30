@@ -40,13 +40,13 @@ public class SearchViewPresenter extends BasePresenter {
                     @Override
                     public void onCompleted() {
                         searchViewPresenter.dismissLoadingDialog();
-                        Toast.makeText(getActivity(), "on complete", Toast.LENGTH_SHORT).show();
+                        searchViewPresenter.displayMessage("on complete");
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         searchViewPresenter.dismissLoadingDialog();
-                        Toast.makeText(getActivity(), "error, " + e.getMessage() , Toast.LENGTH_SHORT).show();
+                        searchViewPresenter.displayMessage("error, " + e.getMessage());
                     }
 
                     @Override
@@ -68,13 +68,13 @@ public class SearchViewPresenter extends BasePresenter {
                     @Override
                     public void onCompleted() {
                         searchViewPresenter.dismissLoadingDialog();
-                        Toast.makeText(getActivity(), "on complete", Toast.LENGTH_SHORT).show();
+                        searchViewPresenter.displayMessage("on complete");
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         searchViewPresenter.dismissLoadingDialog();
-                        Toast.makeText(getActivity(), "error, " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        searchViewPresenter.displayMessage("error, " + e.getMessage());
                     }
 
                     @Override

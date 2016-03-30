@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Weather App</string>
+    <string name="gps_location_permission">Please allow permission to access GPS in order to determine your location</string>
+    <string name="gps_unable_to_determine_location">Could not determine your location, your GPS may be turned off, please turn it on and try again</string>
+    <string name="marker_not_exist_error">marker does not exist ? try query again</string>
+    <string name="map_is_ready">Map is now ready</string>
+    <string name="no_search_history">No Search History</string>
+    <string name="clear_history_btn_text">Clear History</string>
 </resources>

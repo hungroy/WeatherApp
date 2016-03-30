@@ -15,4 +15,5 @@ public interface ISearchViewPresenter {
     void hideSearchView();
     void addWeatherMarkerByLocation(LatLng latLng);
     void addWeatherMarkerBySearch(String searchText);
+    void displayMessage(String message);
 }

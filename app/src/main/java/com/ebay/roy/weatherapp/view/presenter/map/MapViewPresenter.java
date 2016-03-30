@@ -133,7 +133,7 @@ public class MapViewPresenter extends BasePresenter implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getActivity(), "Map is now ready", Toast.LENGTH_SHORT).show();
+        mapViewPresenter.displayMessage(getActivity().getString(R.string.map_is_ready));
         this.googleMap = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false); //hide control buttons from google map
         addGPSBtnActionOnMap();
@@ -178,14 +178,14 @@ public class MapViewPresenter extends BasePresenter implements OnMapReadyCallbac
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_GPS_CODE);
 
-            Toast.makeText(getActivity(), "Please allow permission to access GPS in order to determine your location", Toast.LENGTH_SHORT).show();
+            mapViewPresenter.displayMessage(getActivity().getString(R.string.gps_location_permission));
 
             return;
         }
         googleMap.setMyLocationEnabled(true);
         Location myLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (myLocation == null) {
-            Toast.makeText(getActivity(), "Could not determine your location, your GPS may be turned off, please turn it on and try again", Toast.LENGTH_SHORT).show();
+            mapViewPresenter.displayMessage(getActivity().getString(R.string.gps_unable_to_determine_location));
             return;
         }
         mapViewPresenter.addWeatherMarkerByLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()));
@@ -204,14 +204,15 @@ public class MapViewPresenter extends BasePresenter implements OnMapReadyCallbac
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(getActivity(), "Could not determine your location, your GPS may be turned off, please turn it on and try again", Toast.LENGTH_SHORT).show();
+        mapViewPresenter.displayMessage(getActivity().getString(R.string.gps_unable_to_determine_location));
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
         //go to detailed weather page
         if (!markerReference.containsKey(marker.getId())) {
-            Toast.makeText(getActivity(), "marker does not exist ? try query again", Toast.LENGTH_SHORT).show();
+            mapViewPresenter.displayMessage(getActivity().getString(R.string.marker_not_exist_error));
+
         }
         Weather weather = markerReference.get(marker.getId());
         Bitmap weatherIcon = markerIconReference.get(marker.getId());

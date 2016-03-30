@@ -20,4 +20,5 @@ public interface IMapViewPresenter {
     View getGPSBtnView();
     void goToDetailedWeatherView(Bundle bundle);
     ImageLoader getImageLoader();
+    void displayMessage(String message);
 }

@@ -12,17 +12,21 @@ import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Toast;
@@ -208,6 +212,22 @@ public class MainActivity extends BaseActivity implements IMapViewPresenter, ISe
     @Override
     public void addWeatherMarkerBySearch(String searchText) {
         searchViewPresenter.addWeatherMarkerBySearch(searchText);
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        if (containerBody == null) {
+            return;
+        }
+
+        //chagne backgroudn color
+        int color = ContextCompat.getColor(this, R.color.grey);
+        Snackbar snackbar = Snackbar.make(containerBody, message, Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(color);
+        snackbar.show();
+
+
+
     }
 
     @Override
