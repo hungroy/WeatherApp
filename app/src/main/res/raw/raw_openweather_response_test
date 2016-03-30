@@ -1,0 +1,41 @@
+{
+  "coord": {
+    "lon": 151.21,
+    "lat": -33.87
+  },
+  "weather": [
+    {
+      "id": 800,
+      "main": "Clear",
+      "description": "clear sky",
+      "icon": "01d"
+    }
+  ],
+  "base": "cmc stations",
+  "main": {
+    "temp": 297.15,
+    "pressure": 1014,
+    "humidity": 47,
+    "temp_min": 297.15,
+    "temp_max": 297.15
+  },
+  "wind": {
+    "speed": 4.6,
+    "deg": 260
+  },
+  "clouds": {
+    "all": 0
+  },
+  "dt": 1459297800,
+  "sys": {
+    "type": 1,
+    "id": 8233,
+    "message": 0.0065,
+    "country": "AU",
+    "sunrise": 1459281952,
+    "sunset": 1459324366
+  },
+  "id": 2147714,
+  "name": "Sydney Test Data",
+  "cod": 200
+}

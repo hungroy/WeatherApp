@@ -22,6 +22,7 @@ android {
 
     defaultConfig {
         applicationId "com.ebay.roy.weatherapp"
+        testInstrumentationRunner "com.ebay.roy.weatherapp.InstrumentalMockRunner"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
@@ -98,5 +99,10 @@ dependencies {
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4-legacy:1.6.4'
     testCompile 'org.powermock:powermock-api-mockito:1.6.4'
+
+    androidTestCompile "org.mockito:mockito-core:1.10.8"
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support.test:runner:0.5'
 
 }

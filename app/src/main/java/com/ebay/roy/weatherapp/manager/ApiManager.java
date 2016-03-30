@@ -4,6 +4,8 @@ import android.content.Context;
 
 
 import com.ebay.roy.weatherapp.R;
+import com.ebay.roy.weatherapp.interceptors.FileInterceptors;
+import com.ebay.roy.weatherapp.interceptors.LoggingInterceptor;
 import com.ebay.roy.weatherapp.service.WeatherApiService;
 
 import java.io.IOException;
@@ -55,6 +57,31 @@ public class ApiManager {
 
         return retrofit.create(WeatherApiService.class);
     }
+
+    /**
+     * this function used if you want to get data from file by using interceptor, used espicially for testing without the need of connecting to api
+     * file is located in raw directory
+     * @return
+     */
+    public WeatherApiService getWeatherServiceFromFile(String apiUrl, Context context, int rawFileId) {
+        OkHttpClient okClient = new OkHttpClient.Builder()
+                .addInterceptor(new FileInterceptors(context, rawFileId))
+                .addNetworkInterceptor(new LoggingInterceptor())
+                .build();
+
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(apiUrl)
+                .client(okClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+        return retrofit.create(WeatherApiService.class);
+    }
+
+
 
 
 }

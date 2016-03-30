@@ -105,6 +105,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:id="@+id/pressureValue"
                             android:text="@{weather.main.pressure.toString()}"
                             />
 
@@ -126,6 +127,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:id="@+id/humidityValue"
                             android:text="@{weather.main.humidity.toString()}"
                             />
 
@@ -146,6 +148,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:id="@+id/tempMinValue"
                             android:text='@{weather.main.tempMinC + " C"}'
 
                             />
@@ -168,6 +171,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:id="@+id/tempMaxValue"
                             android:text='@{weather.main.tempMaxC + " C"}'
                             />
 
@@ -189,6 +193,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:id="@+id/windSpeedValue"
                             android:text='@{weather.wind.speed.toString() + " km/h"}'
                             />
 

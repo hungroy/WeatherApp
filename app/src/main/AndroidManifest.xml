@@ -28,6 +28,9 @@
         </activity>
         <activity android:name=".activity.WeatherDetailActivity" android:configChanges="orientation|screenSize">
         </activity>
+
+        <!-- mocking test activities -->
+        <activity android:name=".activity.MainActivityMock" />
     </application>
 
 </manifest>
